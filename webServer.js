@@ -33,7 +33,7 @@ Server.on('error', (error) => {
 
 App.get('/', (req, res) => {
   //res.send("Test");
-    res.sendFile(__dirname + '/index.html')
+  //res.sendFile(__dirname + '/index.html')
 })
 
 Server.listen(9999, ()=>{
