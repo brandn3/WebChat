@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 const express = require("express")
 const WebSocket = require('ws')
-const http = require('http')
+const https = require('https')
 
 
 const App = express()
-const Server = http.createServer(App)
+const Server = https.createServer(App)
 const wss = new WebSocket.Server({server: Server})
 
  wss.on("connection", (ws, req)=>{
