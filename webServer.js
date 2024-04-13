@@ -32,8 +32,8 @@ Server.on('error', (error) => {
   });
 
 App.get('/', (req, res) => {
-  //res.send("Test");
-  res.sendFile(__dirname + '/index.html')
+  res.send("Testpoop");
+  //res.sendFile(__dirname + '/index.html')
 })
 
 Server.listen(9999, ()=>{
