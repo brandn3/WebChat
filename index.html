@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>WebSocket Example</title>
+  <style>
+    html
+    {
+        width: 100%;
+        height: 100%;
+    }
+    body
+    {
+        margin: 0px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #ChatPage
+    {
+        display: none;
+        height: 100%;
+        width: 100%;
+    }
+    #Chat
+    {
+        height: 80%;
+        width: 50%;
+        position: absolute;
+        top: 0%;
+        left: 25%;
+        border: 1px solid black;
+        overflow-y: auto;
+    }
+    #ChatBox
+    {
+        text-align: start;
+        height: 20%;
+        width: 40%;
+        position: absolute;
+        bottom: 0%;
+        left: 25%;
+        box-sizing: border-box;
+        
+    }
+    #Send
+    {
+        height: 20%;
+        width: 10%;
+        position: absolute;
+        bottom: 0%;
+        left: 65%;
+        box-sizing: border-box;
+    }
+    .Chat
+    {
+       float: left;
+       width: 100%;
+       height: fit-content;
+       border: 1px solid black; 
+       box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+    <div id="LoginPage">
+        <div>Type in your temporary name </div>
+        <input type="text" id="UsernameInput" placeholder="Enter Username">
+        <button onclick="JoinChat()">Join</button>
+    </div>
+    <div id="ChatPage">
+        <div id="Chat"></div>
+        <textarea id="ChatBox"></textarea>
+        <button onclick="SendMessage()" id="Send">Send</button>
+    </div>
+
+
+  <script>
+    //const socket = new WebSocket('ws://brandonlanoue.net:443');;
+    let Username
+    let UserId;
+    let Login = document.getElementById("LoginPage");
+    let ChatPage = document.getElementById("ChatPage");
+    let Chat = document.getElementById("Chat");
+    let ChatBox = document.getElementById("ChatBox")
+
+    function JoinChat()
+    {
+        UsernameInput = document.getElementById("UsernameInput");
+        if(UsernameInput.value != "")
+        {
+            Username = UsernameInput.value;
+        }
+        else
+        {
+            Username = "Anonymous"
+        }
+    
+        socket.send("TYPE/nJOIN/nUSERNAME/n" + Username)
+        
+        Login.style.display = "none";
+        ChatPage.style.display = "block"
+        
+        
+    }
+    function SendMessage()
+    {
+        let chatText = ChatBox.value;
+        socket.send("TYPE/nMSG/nUSERNAME/n" + Username +"/n" + chatText )
+        ChatBox.value = ""
+    }
+    socket.onclose = (event) =>
+    {
+        socket.send("TYPE/nEXIT/nUSERNAME/n" + Username)
+    }
+    socket.onmessage = (event) => 
+    {
+        const message = event.data;
+        let lines = message.split('/n')
+        //console.log(lines);
+        if(lines[0] == "TYPE")
+        {
+            if(lines[1] == "JOIN" )
+            {
+                CreateChat("Join",lines[3], " has joined the chat")
+            }
+            if(lines[1] == "MSG" )
+            {
+                
+                CreateChat("MSG",lines[3],lines[4])
+            }
+            if(lines[1] == "EXIT" )
+            {
+                CreateChat("Join",lines[3], " has left the chat")
+            }
+        }
+    };
+    function CreateChat(Type, UserName, Message)
+    {
+        let NewChat = document.createElement("div");
+
+        if(Type == "Join")
+        {
+            NewChat.innerText = UserName + Message
+        }
+        if(Type == "MSG")
+        {
+            NewChat.innerText = UserName + ": " + Message
+        }
+        NewChat.classList.add("Chat")
+
+        Chat.appendChild(NewChat);
+    }
+    
+    
+    
+  </script>
+</body>
+</html>
